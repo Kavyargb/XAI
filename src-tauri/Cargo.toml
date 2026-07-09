@@ -1,5 +1,5 @@
 [package]
-name = "en-croissant"
+name = "reckless-ai"
 version = "0.15.0"
 description = "A Modern Chess Database"
 authors = ["Francisco Salgueiro <fgcdbs@gmail.com>"]

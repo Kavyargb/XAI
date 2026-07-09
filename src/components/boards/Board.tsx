@@ -472,7 +472,7 @@ function Board({
                     }
                   : undefined
               }
-              className={classes.chessboard}
+              className={`${classes.chessboard} hero-board-glow`}
               ref={boardRef}
               onClick={() => {
                 eraseDrawablesOnClick && clearShapes();

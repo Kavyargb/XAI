@@ -20,10 +20,11 @@ import type { Dirs } from "@/App";
 import AboutModal from "@/components/About";
 import { SideBar } from "@/components/Sidebar";
 import TopBar from "@/components/TopBar";
-import { activeTabAtom, nativeBarAtom, tabsAtom } from "@/state/atoms";
+import { activeTabAtom, nativeBarAtom, tabsAtom, recentFilesAtom, showArrowsAtom } from "@/state/atoms";
 import { keyMapAtom } from "@/state/keybinds";
 import { openFile } from "@/utils/files";
 import { createTab } from "@/utils/tabs";
+import { IconFileImport } from "@tabler/icons-react";
 
 type MenuGroup = {
   label: string;
@@ -90,7 +91,14 @@ function RootLayout() {
   const navigate = useNavigate();
 
   const [, setTabs] = useAtom(tabsAtom);
-  const [, setActiveTab] = useAtom(activeTabAtom);
+  const [activeTab, setActiveTab] = useAtom(activeTabAtom);
+  const recentFiles = useAtomValue(recentFilesAtom);
+  const [showArrows, setShowArrows] = useAtom(showArrowsAtom);
+
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [paletteSearch, setPaletteSearch] = useState("");
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const [dragActive, setDragActive] = useState(false);
 
   const { t } = useTranslation();
 
@@ -104,6 +112,88 @@ function RootLayout() {
       openFile(selected, setTabs, setActiveTab);
     }
   }, [navigate, setActiveTab, setTabs]);
+
+  const commandsList = useMemo(() => [
+    { id: "search_opening", label: "Search opening", shortcut: "Go to Files", action: () => navigate({ to: "/files" }) },
+    {
+      id: "start_puzzle",
+      label: "Start puzzle",
+      shortcut: "Puzzles",
+      action: () => {
+        setTabs((prev) => {
+          const active = prev.find((t) => t.value === activeTab);
+          if (active) {
+            active.name = t("Home.PuzzleTraining");
+            active.type = "puzzles";
+          }
+          return [...prev];
+        });
+        navigate({ to: "/" });
+      }
+    },
+    { id: "import_pgn", label: "Import PGN", shortcut: "File Open", action: () => openNewFile() },
+    {
+      id: "train_repertoire",
+      label: recentFiles.find(f => f.type === "repertoire")
+        ? `Train ${recentFiles.find(f => f.type === "repertoire")?.name.replace(/\.pgn$/i, "")}`
+        : "Train Repertoire",
+      shortcut: "Practice",
+      action: () => {
+        const lastRepertoire = recentFiles.find(f => f.type === "repertoire");
+        if (lastRepertoire) {
+          openFile(lastRepertoire.path, setTabs, setActiveTab);
+          navigate({ to: "/" });
+        } else {
+          notifications.show({
+            title: "Practice",
+            message: "No repertoire found to train.",
+            color: "orange"
+          });
+        }
+      }
+    },
+    { id: "flip_board", label: "Flip board", shortcut: "X key", action: () => window.dispatchEvent(new CustomEvent("xai-flip-board")) },
+    {
+      id: "toggle_arrows",
+      label: "Toggle arrows",
+      shortcut: showArrows ? "Enabled" : "Disabled",
+      action: () => {
+        setShowArrows((prev) => !prev);
+      }
+    },
+    { id: "go_settings", label: "Go to settings", shortcut: "Preferences", action: () => navigate({ to: "/settings" }) }
+  ], [navigate, openNewFile, recentFiles, activeTab, setTabs, setActiveTab, t, showArrows, setShowArrows]);
+
+  const filteredCommands = useMemo(() => {
+    return commandsList.filter((cmd) =>
+      cmd.label.toLowerCase().includes(paletteSearch.toLowerCase())
+    );
+  }, [commandsList, paletteSearch]);
+
+  useEffect(() => {
+    setSelectedIndex(0);
+  }, [paletteSearch]);
+
+  const handlePaletteKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (filteredCommands.length > 0 ? (prev + 1) % filteredCommands.length : 0));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (filteredCommands.length > 0 ? (prev - 1 + filteredCommands.length) % filteredCommands.length : 0));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (filteredCommands[selectedIndex]) {
+        filteredCommands[selectedIndex].action();
+      }
+      setPaletteOpen(false);
+      setPaletteSearch("");
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      setPaletteOpen(false);
+      setPaletteSearch("");
+    }
+  };
 
   const createNewTab = useCallback(() => {
     navigate({ to: "/" });
@@ -143,6 +233,10 @@ function RootLayout() {
 
   useHotkeys(keyMap.NEW_TAB.keys, createNewTab);
   useHotkeys(keyMap.OPEN_FILE.keys, openNewFile);
+  useHotkeys("ctrl+k, meta+k", (e) => {
+    e.preventDefault();
+    setPaletteOpen((p) => !p);
+  });
   const [opened, setOpened] = useState(false);
 
   const isMacOS = platform() === "macos";
@@ -299,7 +393,7 @@ function RootLayout() {
             label: t("Menu.Help.OpenLogs"),
             id: "logs",
             action: async () => {
-              const path = await resolve(await appLogDir(), "en-croissant.log");
+              const path = await resolve(await appLogDir(), "reckless-ai.log");
               notifications.show({
                 title: "Logs",
                 message: `Opened logs in ${path}`,
@@ -332,7 +426,8 @@ function RootLayout() {
   }, [menu, isNative]);
 
   useEffect(() => {
-    const unlisten = getCurrentWindow().listen(TauriEvent.DRAG_DROP, (event) => {
+    const unlistenDrop = getCurrentWindow().listen(TauriEvent.DRAG_DROP, (event) => {
+      setDragActive(false);
       const payload = event.payload as { paths: string[] };
       if (payload?.paths) {
         const pgnFiles = payload.paths.filter((path) => path.toLowerCase().endsWith(".pgn"));
@@ -346,15 +441,25 @@ function RootLayout() {
       }
     });
 
+    const unlistenEnter = getCurrentWindow().listen(TauriEvent.DRAG_ENTER, () => {
+      setDragActive(true);
+    });
+
+    const unlistenLeave = getCurrentWindow().listen(TauriEvent.DRAG_LEAVE, () => {
+      setDragActive(false);
+    });
+
     return () => {
-      unlisten.then((fn) => fn());
+      unlistenDrop.then((fn) => fn());
+      unlistenEnter.then((fn) => fn());
+      unlistenLeave.then((fn) => fn());
     };
   }, [navigate, setTabs, setActiveTab]);
 
   return (
     <AppShell
       navbar={{
-        width: "3rem",
+        width: "240px",
         breakpoint: 0,
       }}
       header={
@@ -386,6 +491,52 @@ function RootLayout() {
       <AppShell.Main>
         <Outlet />
       </AppShell.Main>
+
+      {dragActive && (
+        <div className="drag-overlay-active">
+          <IconFileImport size="3.5rem" style={{ marginBottom: "1rem" }} />
+          <div>Drop PGN file here to import</div>
+        </div>
+      )}
+
+      {paletteOpen && (
+        <div className="command-palette-overlay" onClick={() => { setPaletteOpen(false); setPaletteSearch(""); }}>
+          <div className="command-palette-box" onClick={(e) => e.stopPropagation()}>
+            <input
+              type="text"
+              autoFocus
+              className="command-palette-input"
+              placeholder="What do you want to work on today?..."
+              value={paletteSearch}
+              onChange={(e) => setPaletteSearch(e.target.value)}
+              onKeyDown={handlePaletteKeyDown}
+            />
+            <div className="command-palette-list">
+              {filteredCommands.length === 0 ? (
+                <div style={{ padding: "12px 16px", color: "rgba(255,255,255,0.4)", fontSize: "0.9rem" }}>
+                  No commands found
+                </div>
+              ) : (
+                filteredCommands.map((cmd, idx) => (
+                  <div
+                    key={cmd.id}
+                    className={`command-palette-item ${idx === selectedIndex ? "selected" : ""}`}
+                    onClick={() => {
+                      cmd.action();
+                      setPaletteOpen(false);
+                      setPaletteSearch("");
+                    }}
+                    onMouseEnter={() => setSelectedIndex(idx)}
+                  >
+                    <span>{cmd.label}</span>
+                    <span className="command-palette-shortcut">{cmd.shortcut}</span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </AppShell>
   );
 }

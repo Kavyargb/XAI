@@ -239,6 +239,7 @@ export default function App() {
   }, [setDatabaseConversionState]);
 
   const theme = createTheme({
+    fontFamily: "Outfit, Inter, system-ui, -apple-system, sans-serif",
     primaryColor,
     colors: {
       dark: [

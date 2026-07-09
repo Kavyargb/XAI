@@ -1,5 +1,5 @@
 import type { MantineColor } from "@mantine/core";
-import { resolve } from "@tauri-apps/api/path";
+import { resolve, resolveResource } from "@tauri-apps/api/path";
 import { exists, mkdir, readTextFile, writeTextFile } from "@tauri-apps/plugin-fs";
 import { parseUci } from "chessops";
 import { INITIAL_FEN, makeFen } from "chessops/fen";
@@ -132,6 +132,29 @@ const enginesFileStorage: AsyncStringStorage = {
         try {
             return await readTextFile(await getEnginesStoragePath(key));
         } catch {
+            if (key === "engines/engines.json") {
+                try {
+                    const recklessPath = await resolveResource("Reckless AI.exe");
+                    const defaultEngine = {
+                        type: "local",
+                        id: "reckless-ai",
+                        name: "Reckless AI",
+                        version: "0.10.0-dev",
+                        path: recklessPath,
+                        loaded: true,
+                        enabled: true,
+                        settings: [],
+                    };
+                    const defaultEngines = [defaultEngine];
+                    const content = JSON.stringify(defaultEngines);
+                    const path = await getEnginesStoragePath(key);
+                    await ensureParentDir(path);
+                    await writeTextFile(path, content);
+                    return content;
+                } catch (e) {
+                    console.error("Failed to initialize default Reckless AI engine:", e);
+                }
+            }
             return null;
         }
     },

@@ -123,6 +123,15 @@ function BoardAnalysis() {
   const practiceState = useAtomValue(practiceStateAtom);
   const isPracticeRating = practicing && practiceState.phase === "correct";
 
+  const tabItems = [
+    ...(isRepertoire ? [{ value: "practice", label: t("Board.Tabs.Practice"), icon: IconTargetArrow }] : []),
+    { value: "analysis", label: t("Board.Tabs.Analysis"), icon: IconZoomCheck },
+    { value: "database", label: t("Board.Tabs.Database"), icon: IconDatabase },
+    { value: "annotate", label: t("Board.Tabs.Annotate"), icon: IconNotes },
+    { value: "info", label: t("Board.Tabs.Info"), icon: IconInfoCircle },
+  ];
+  const activeIndex = Math.max(0, tabItems.findIndex((item) => item.value === currentTabSelected));
+
   const setPracticePath = useStore(store, (s) => s.setPracticePath);
   useEffect(() => {
     if (!practicing) {
@@ -182,9 +191,10 @@ function BoardAnalysis() {
       </Portal>
       <Portal target="#topRight" style={{ height: "100%" }}>
         <Paper
-          withBorder
+          className="premium-card"
           style={{
             height: "100%",
+            padding: "1rem",
           }}
           pos="relative"
         >
@@ -199,36 +209,31 @@ function BoardAnalysis() {
               display: "flex",
               flexDirection: "column",
             }}
-            styles={{
-              tabLabel: {
-                flex: 0,
-              },
-              tab: {
-                display: "flex",
-                justifyContent: "center",
-                gap: "0.3rem",
-              },
-            }}
           >
-            <Tabs.List grow>
-              {isRepertoire && (
-                <Tabs.Tab value="practice" leftSection={<IconTargetArrow size="1rem" />}>
-                  {t("Board.Tabs.Practice")}
-                </Tabs.Tab>
-              )}
-              <Tabs.Tab value="analysis" leftSection={<IconZoomCheck size="1rem" />}>
-                {t("Board.Tabs.Analysis")}
-              </Tabs.Tab>
-              <Tabs.Tab value="database" leftSection={<IconDatabase size="1rem" />}>
-                {t("Board.Tabs.Database")}
-              </Tabs.Tab>
-              <Tabs.Tab value="annotate" leftSection={<IconNotes size="1rem" />}>
-                {t("Board.Tabs.Annotate")}
-              </Tabs.Tab>
-              <Tabs.Tab value="info" leftSection={<IconInfoCircle size="1rem" />}>
-                {t("Board.Tabs.Info")}
-              </Tabs.Tab>
-            </Tabs.List>
+            <div className="sliding-tabs-container">
+              <div
+                className="sliding-tabs-pill"
+                style={{
+                  width: `calc(${100 / tabItems.length}% - 8px)`,
+                  left: `calc(${(activeIndex / tabItems.length) * 100}% + 4px)`,
+                }}
+              />
+              {tabItems.map((item) => {
+                const IconComp = item.icon;
+                const isActive = currentTabSelected === item.value;
+                return (
+                  <button
+                    key={item.value}
+                    className={`sliding-tabs-btn ${isActive ? "active" : ""}`}
+                    onClick={() => setCurrentTabSelected(item.value)}
+                    type="button"
+                  >
+                    <IconComp size="0.95rem" style={{ flexShrink: 0 }} />
+                    <span style={{ whiteSpace: "nowrap" }}>{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
             {isRepertoire && (
               <Tabs.Panel value="practice" flex={1} style={{ overflowY: "hidden" }}>
                 <PracticePanel />

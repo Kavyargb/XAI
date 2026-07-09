@@ -30,7 +30,7 @@ function AboutModal({
     load();
   }, []);
   return (
-    <Modal centered opened={opened} onClose={() => setOpened(false)} title="En Croissant">
+    <Modal centered opened={opened} onClose={() => setOpened(false)} title="Reckless AI">
       <Text>Version: {info?.version}</Text>
       <Text>Tauri version: {info?.tauri}</Text>
       <Text>
@@ -39,8 +39,8 @@ function AboutModal({
 
       <br />
 
-      <Anchor href="https://www.encroissant.org" target="_blank" rel="noreferrer">
-        www.encroissant.org
+      <Anchor href="https://github.com/Kavyargb/XAI" target="_blank" rel="noreferrer">
+        Reckless AI Repository
       </Anchor>
     </Modal>
   );

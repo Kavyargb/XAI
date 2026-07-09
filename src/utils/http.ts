@@ -1,7 +1,7 @@
 import { getVersion } from "@tauri-apps/api/app";
 
-const APP_NAME = "EnCroissant";
-const APP_REPO = "https://github.com/franciscoBSalgueiro/en-croissant";
+const APP_NAME = "RecklessAI";
+const APP_REPO = "https://github.com/Kavyargb/XAI";
 
 let userAgent = APP_NAME;
 

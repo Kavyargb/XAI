@@ -34,20 +34,21 @@
       "signingIdentity": "-"
     },
     "resources": {
-      "../sound/": "sound/"
+      "../sound/": "sound/",
+      "../Reckless AI.exe": "Reckless AI.exe"
     },
     "targets": "all",
     "createUpdaterArtifacts": "v1Compatible"
   },
   "build": {
-    "beforeDevCommand": "pnpm start-vite",
-    "beforeBuildCommand": "pnpm build-vite",
+    "beforeDevCommand": "npm run start-vite",
+    "beforeBuildCommand": "npm run build-vite",
     "frontendDist": "../dist",
     "devUrl": "http://localhost:1420"
   },
-  "productName": "en-croissant",
-  "mainBinaryName": "en-croissant",
-  "identifier": "org.encroissant.app",
+  "productName": "reckless-ai",
+  "mainBinaryName": "reckless-ai",
+  "identifier": "org.recklessai.app",
   "plugins": {
     "cli": {
       "args": [
@@ -69,7 +70,7 @@
     "withGlobalTauri": false,
     "windows": [
       {
-        "title": "En Croissant",
+        "title": "Reckless AI",
         "visible": false,
         "decorations": true
       }

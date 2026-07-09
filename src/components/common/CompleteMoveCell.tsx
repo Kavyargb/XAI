@@ -1,4 +1,4 @@
-import { ActionIcon, Box, Menu, Portal, Text, Tooltip } from "@mantine/core";
+import { ActionIcon, Box, HoverCard, Menu, Portal, Text, Tooltip } from "@mantine/core";
 import { useClickOutside } from "@mantine/hooks";
 import {
   IconArrowsJoin,
@@ -22,6 +22,7 @@ import { getTabFile } from "@/utils/tabs";
 import { type TreeNode, treeIterator } from "@/utils/treeReducer";
 import MoveCell from "./MoveCell";
 import { TreeStateContext } from "./TreeStateContext";
+import { Chessground } from "@/chessground/Chessground";
 
 const transpositionCache = new WeakMap<TreeNode, Map<string, number[][]>>();
 
@@ -123,71 +124,105 @@ function CompleteMoveCell({
       >
         {hasNumber && `${moveNumber.toString()}${isWhite ? "." : "..."}`}
         {move && (
-          <Menu opened={open} width={200}>
-            <Menu.Target>
-              <MoveCell
-                ref={ref}
-                move={move}
-                annotations={annotations}
-                isStart={isStart}
-                isCurrentVariation={isCurrentVariation}
-                onClick={() => goToMove(movePath)}
-                onContextMenu={(e: React.MouseEvent) => {
-                  setOpen((v) => !v);
-                  e.preventDefault();
-                }}
-                fullWidth={tableLayout}
-                rightAccessory={
-                  tableLayout && scoreText ? (
-                    <Text component="span" size="xs" c="dimmed">
-                      {scoreText}
-                    </Text>
-                  ) : undefined
-                }
-              />
-            </Menu.Target>
+          <HoverCard
+            width={220}
+            shadow="md"
+            openDelay={350}
+            closeDelay={100}
+            position="top"
+            withArrow
+          >
+            <HoverCard.Target>
+              <div style={{ display: "inline-block", width: tableLayout ? "100%" : undefined }}>
+                <Menu opened={open} width={200}>
+                  <Menu.Target>
+                    <MoveCell
+                      ref={ref}
+                      move={move}
+                      annotations={annotations}
+                      isStart={isStart}
+                      isCurrentVariation={isCurrentVariation}
+                      onClick={() => goToMove(movePath)}
+                      onContextMenu={(e: React.MouseEvent) => {
+                        setOpen((v) => !v);
+                        e.preventDefault();
+                      }}
+                      fullWidth={tableLayout}
+                      rightAccessory={
+                        tableLayout && scoreText ? (
+                          <Text component="span" size="xs" c="dimmed">
+                            {scoreText}
+                          </Text>
+                        ) : undefined
+                      }
+                    />
+                  </Menu.Target>
 
-            <Portal>
-              <Menu.Dropdown>
-                {tabFile?.metadata.type === "repertoire" && (
-                  <Menu.Item
-                    leftSection={<IconFlag size="0.875rem" />}
-                    onClick={() => setStart(movePath)}
-                  >
-                    {t("Menu.MarkAsStart")}
-                  </Menu.Item>
-                )}
-                <Menu.Item
-                  leftSection={<IconChevronsUp size="0.875rem" />}
-                  onClick={() => promoteToMainline(movePath)}
-                >
-                  {t("Menu.PromoteToMainLine")}
-                </Menu.Item>
+                  <Portal>
+                    <Menu.Dropdown>
+                      {tabFile?.metadata.type === "repertoire" && (
+                        <Menu.Item
+                          leftSection={<IconFlag size="0.875rem" />}
+                          onClick={() => setStart(movePath)}
+                        >
+                          {t("Menu.MarkAsStart")}
+                        </Menu.Item>
+                      )}
+                      <Menu.Item
+                        leftSection={<IconChevronsUp size="0.875rem" />}
+                        onClick={() => promoteToMainline(movePath)}
+                      >
+                        {t("Menu.PromoteToMainLine")}
+                      </Menu.Item>
 
-                <Menu.Item
-                  leftSection={<IconChevronUp size="0.875rem" />}
-                  onClick={() => promoteVariation(movePath)}
-                >
-                  {t("Menu.PromoteVariation")}
-                </Menu.Item>
+                      <Menu.Item
+                        leftSection={<IconChevronUp size="0.875rem" />}
+                        onClick={() => promoteVariation(movePath)}
+                      >
+                        {t("Menu.PromoteVariation")}
+                      </Menu.Item>
 
-                <Menu.Item
-                  leftSection={<IconCopy size="0.875rem" />}
-                  onClick={() => copyVariationPgn(movePath)}
-                >
-                  {t("Menu.CopyVariationPGN")}
-                </Menu.Item>
+                      <Menu.Item
+                        leftSection={<IconCopy size="0.875rem" />}
+                        onClick={() => copyVariationPgn(movePath)}
+                      >
+                        {t("Menu.CopyVariationPGN")}
+                      </Menu.Item>
 
-                <Menu.Item
-                  color="red"
-                  leftSection={<IconX size="0.875rem" />}
-                  onClick={() => deleteMove(movePath)}
-                >
-                  {t("Menu.DeleteMove")}
-                </Menu.Item>
-              </Menu.Dropdown>
-            </Portal>
-          </Menu>
+                      <Menu.Item
+                        color="red"
+                        leftSection={<IconX size="0.875rem" />}
+                        onClick={() => deleteMove(movePath)}
+                      >
+                        {t("Menu.DeleteMove")}
+                      </Menu.Item>
+                    </Menu.Dropdown>
+                  </Portal>
+                </Menu>
+              </div>
+            </HoverCard.Target>
+            <HoverCard.Dropdown
+              p={4}
+              style={{
+                background: "rgba(20, 24, 38, 0.9)",
+                backdropFilter: "blur(12px)",
+                border: "1px solid rgba(255, 255, 255, 0.08)",
+                borderRadius: "8px",
+                overflow: "hidden",
+              }}
+            >
+              {fen && (
+                <Box w={210} h={210}>
+                  <Chessground
+                    fen={fen}
+                    viewOnly={true}
+                    coordinates={false}
+                    orientation={useStore(store, (s) => s.headers.orientation || "white")}
+                  />
+                </Box>
+              )}
+            </HoverCard.Dropdown>
+          </HoverCard>
         )}
         {transpositions.length > 0 && (
           <Tooltip label="Transposition">
