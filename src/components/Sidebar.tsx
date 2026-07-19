@@ -32,7 +32,7 @@ function NavbarLink({ url, icon: Icon, label }: NavbarLinkProps) {
         [classes.active]: isActive,
       })}
     >
-      <Icon size="1.25rem" stroke={1.5} className={classes.linkIcon} />
+      <Icon size="1.2rem" stroke={1.5} className={classes.linkIcon} />
       <span className={classes.linkLabel}>{label}</span>
     </Link>
   );
@@ -92,21 +92,22 @@ export function SideBar() {
     <Box className={classes.sidebarContainer}>
       {/* Top logo */}
       <AppShellSection className={classes.logoSection}>
-        <Group gap="xs" justify="center">
-          <Text className={classes.logoText}>Reckless CHESS</Text>
-        </Group>
+        <div className={classes.logoWrapper}>
+          <span className={classes.logoIcon}>♚</span>
+          <Text className={classes.logoText}>RECKLESS</Text>
+        </div>
       </AppShellSection>
 
       {/* Main Nav Links */}
       <AppShellSection grow className={classes.linksSection}>
-        <Stack gap="xs">
+        <Stack gap={4}>
           {links}
         </Stack>
       </AppShellSection>
 
       {/* Bottom Profile and Settings */}
       <AppShellSection className={classes.bottomSection}>
-        <Stack gap="md">
+        <Stack gap="sm">
           <NavbarLink icon={IconSettings} label={t("SideBar.Settings")} url="/settings" />
           
           <Box className={classes.profileCard}>
@@ -127,10 +128,12 @@ export function SideBar() {
                 </Text>
               </div>
               <Box className={classes.ratingBadge}>
-                🛡️ {highestRating}
+                {highestRating}
               </Box>
             </Group>
           </Box>
+
+          <Text className={classes.versionBadge}>v0.15.0</Text>
         </Stack>
       </AppShellSection>
     </Box>

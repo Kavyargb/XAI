@@ -1,9 +1,18 @@
+/* ============================================================
+   SETTINGS PAGE — Premium Layout
+   ============================================================ */
+
 [data-mantine-color-scheme="light"] .card {
   background-color: var(--mantine-color-white);
 }
 
 [data-mantine-color-scheme="dark"] .card {
-  background-color: var(--mantine-color-dark-7);
+  background: rgba(22, 28, 44, 0.4);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--xai-border-subtle, rgba(255, 255, 255, 0.04));
+  border-radius: var(--xai-radius-lg, 16px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
 }
 
 [data-mantine-color-scheme="light"] .item {
@@ -11,14 +20,39 @@
 }
 
 [data-mantine-color-scheme="dark"] .item {
-  border-top: 1px solid var(--mantine-color-dark-4);
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
 }
 
 .item {
   padding-top: var(--mantine-spacing-sm);
   margin-top: var(--mantine-spacing-sm);
+  transition: background var(--xai-duration-fast, 150ms) ease;
+  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+  border-radius: var(--xai-radius-sm, 8px);
+  margin-left: calc(var(--mantine-spacing-md) * -1);
+  margin-right: calc(var(--mantine-spacing-md) * -1);
+}
+
+[data-mantine-color-scheme="dark"] .item:hover {
+  background: rgba(255, 255, 255, 0.015);
 }
 
 .title {
   line-height: 1;
+  font-family: var(--xai-font-display, Outfit, sans-serif);
+}
+
+/* Settings tabs in dark mode */
+[data-mantine-color-scheme="dark"] :global(.mantine-Tabs-tab) {
+  transition: all var(--xai-duration-fast, 150ms) ease;
+  border-radius: var(--xai-radius-sm, 8px) !important;
+}
+
+[data-mantine-color-scheme="dark"] :global(.mantine-Tabs-tab):hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+[data-mantine-color-scheme="dark"] :global(.mantine-Tabs-tab[data-active]) {
+  background: rgba(0, 180, 216, 0.08);
+  border-color: rgba(0, 180, 216, 0.2);
 }

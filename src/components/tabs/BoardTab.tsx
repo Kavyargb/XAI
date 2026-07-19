@@ -65,7 +65,12 @@ export function BoardTab({
           variant="default"
           fw="normal"
           radius={0}
-          leftSection={<TabIcon tab={tab} tabType={tabType} />}
+          leftSection={
+            <>
+              <span className={classes.tabTypeDot} data-type={tabType} />
+              <TabIcon tab={tab} tabType={tabType} />
+            </>
+          }
           rightSection={
             <ActionIcon
               component="div"

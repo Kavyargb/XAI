@@ -1,16 +1,97 @@
+/* ============================================================
+   TOPBAR — Window Controls & Menu Bar
+   ============================================================ */
+
+.topBarContainer {
+  background: rgba(10, 14, 24, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--xai-border-subtle);
+  position: relative;
+}
+
+/* Subtle bottom glow line */
+.topBarContainer::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(0, 180, 216, 0.15) 50%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+.menuButton {
+  font-family: var(--xai-font-body) !important;
+  font-size: 0.78rem !important;
+  transition: all var(--xai-duration-fast) ease !important;
+}
+
+.menuButton:hover {
+  background: rgba(255, 255, 255, 0.04) !important;
+}
+
+/* Ctrl+K hint badge */
+.paletteHint {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  margin-left: auto;
+  margin-right: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--xai-border-subtle);
+  border-radius: var(--xai-radius-pill);
+  cursor: pointer;
+  transition: all var(--xai-duration-fast) ease;
+}
+
+.paletteHint:hover {
+  background: var(--xai-cyan-dim);
+  border-color: rgba(0, 180, 216, 0.2);
+}
+
+.paletteHintText {
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.3);
+  font-family: var(--xai-font-body);
+  white-space: nowrap;
+}
+
+.paletteHintKbd {
+  font-size: 0.62rem;
+  color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 4px;
+  padding: 1px 5px;
+  font-family: var(--xai-font-body);
+}
+
+/* Window control buttons */
 .icon {
-  transition: background-color 100ms ease;
+  transition: all var(--xai-duration-fast) ease;
+  border-radius: 0;
 }
 
 .icon:hover {
-  background-color: var(--mantine-color-dark-5);
+  background-color: rgba(255, 255, 255, 0.06);
+  transform: scale(1.02);
 }
 
 .close {
-  transition: background-color 100ms ease;
+  transition: all var(--xai-duration-fast) ease;
+  border-radius: 0;
 }
 
 .close:hover {
   background-color: var(--mantine-color-red-7);
   color: var(--mantine-color-white);
+  transform: scale(1.02);
 }

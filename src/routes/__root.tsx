@@ -24,7 +24,17 @@ import { activeTabAtom, nativeBarAtom, tabsAtom, recentFilesAtom, showArrowsAtom
 import { keyMapAtom } from "@/state/keybinds";
 import { openFile } from "@/utils/files";
 import { createTab } from "@/utils/tabs";
-import { IconFileImport } from "@tabler/icons-react";
+import {
+  IconArrowsExchange,
+  IconChessKnight,
+  IconFileImport,
+  IconPuzzle,
+  IconSearch,
+  IconSettings,
+  IconSwords,
+  IconTargetArrow,
+} from "@tabler/icons-react";
+import type { Icon } from "@tabler/icons-react";
 
 type MenuGroup = {
   label: string;
@@ -114,11 +124,12 @@ function RootLayout() {
   }, [navigate, setActiveTab, setTabs]);
 
   const commandsList = useMemo(() => [
-    { id: "search_opening", label: "Search opening", shortcut: "Go to Files", action: () => navigate({ to: "/files" }) },
+    { id: "search_opening", label: "Search opening", shortcut: "Go to Files", icon: IconSearch, action: () => navigate({ to: "/files" }) },
     {
       id: "start_puzzle",
       label: "Start puzzle",
       shortcut: "Puzzles",
+      icon: IconPuzzle,
       action: () => {
         setTabs((prev) => {
           const active = prev.find((t) => t.value === activeTab);
@@ -131,13 +142,14 @@ function RootLayout() {
         navigate({ to: "/" });
       }
     },
-    { id: "import_pgn", label: "Import PGN", shortcut: "File Open", action: () => openNewFile() },
+    { id: "import_pgn", label: "Import PGN", shortcut: "File Open", icon: IconFileImport, action: () => openNewFile() },
     {
       id: "train_repertoire",
       label: recentFiles.find(f => f.type === "repertoire")
         ? `Train ${recentFiles.find(f => f.type === "repertoire")?.name.replace(/\.pgn$/i, "")}`
         : "Train Repertoire",
       shortcut: "Practice",
+      icon: IconTargetArrow,
       action: () => {
         const lastRepertoire = recentFiles.find(f => f.type === "repertoire");
         if (lastRepertoire) {
@@ -152,16 +164,17 @@ function RootLayout() {
         }
       }
     },
-    { id: "flip_board", label: "Flip board", shortcut: "X key", action: () => window.dispatchEvent(new CustomEvent("xai-flip-board")) },
+    { id: "flip_board", label: "Flip board", shortcut: "X key", icon: IconArrowsExchange, action: () => window.dispatchEvent(new CustomEvent("xai-flip-board")) },
     {
       id: "toggle_arrows",
       label: "Toggle arrows",
       shortcut: showArrows ? "Enabled" : "Disabled",
+      icon: IconSwords,
       action: () => {
         setShowArrows((prev) => !prev);
       }
     },
-    { id: "go_settings", label: "Go to settings", shortcut: "Preferences", action: () => navigate({ to: "/settings" }) }
+    { id: "go_settings", label: "Go to settings", shortcut: "Preferences", icon: IconSettings, action: () => navigate({ to: "/settings" }) }
   ], [navigate, openNewFile, recentFiles, activeTab, setTabs, setActiveTab, t, showArrows, setShowArrows]);
 
   const filteredCommands = useMemo(() => {
@@ -506,33 +519,43 @@ function RootLayout() {
               type="text"
               autoFocus
               className="command-palette-input"
-              placeholder="What do you want to work on today?..."
+              placeholder="Search commands…"
               value={paletteSearch}
               onChange={(e) => setPaletteSearch(e.target.value)}
               onKeyDown={handlePaletteKeyDown}
             />
             <div className="command-palette-list">
               {filteredCommands.length === 0 ? (
-                <div style={{ padding: "12px 16px", color: "rgba(255,255,255,0.4)", fontSize: "0.9rem" }}>
-                  No commands found
+                <div className="command-palette-empty">
+                  <IconSearch size="1.5rem" className="command-palette-empty-icon" />
+                  No commands match "{paletteSearch}"
                 </div>
               ) : (
-                filteredCommands.map((cmd, idx) => (
-                  <div
-                    key={cmd.id}
-                    className={`command-palette-item ${idx === selectedIndex ? "selected" : ""}`}
-                    onClick={() => {
-                      cmd.action();
-                      setPaletteOpen(false);
-                      setPaletteSearch("");
-                    }}
-                    onMouseEnter={() => setSelectedIndex(idx)}
-                  >
-                    <span>{cmd.label}</span>
-                    <span className="command-palette-shortcut">{cmd.shortcut}</span>
-                  </div>
-                ))
+                filteredCommands.map((cmd, idx) => {
+                  const CmdIcon = cmd.icon;
+                  return (
+                    <div
+                      key={cmd.id}
+                      className={`command-palette-item ${idx === selectedIndex ? "selected" : ""}`}
+                      onClick={() => {
+                        cmd.action();
+                        setPaletteOpen(false);
+                        setPaletteSearch("");
+                      }}
+                      onMouseEnter={() => setSelectedIndex(idx)}
+                    >
+                      <CmdIcon size="1rem" className="command-palette-item-icon" />
+                      <span className="command-palette-item-content">{cmd.label}</span>
+                      <span className="command-palette-shortcut">{cmd.shortcut}</span>
+                    </div>
+                  );
+                })
               )}
+            </div>
+            <div className="command-palette-footer">
+              <span><kbd>↑↓</kbd> navigate</span>
+              <span><kbd>↵</kbd> select</span>
+              <span><kbd>esc</kbd> close</span>
             </div>
           </div>
         </div>

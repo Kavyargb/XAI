@@ -1,3 +1,7 @@
+/* ============================================================
+   BOARDS PAGE — Tab Bar & Content Area
+   ============================================================ */
+
 .tabsContainer {
   display: flex;
   flex-direction: column;
@@ -6,8 +10,27 @@
 }
 
 .tabsHeader {
-  margin-bottom: 0.5rem;
+  margin-bottom: 0;
   flex-shrink: 0;
+  position: relative;
+}
+
+/* Subtle bottom gradient separator */
+.tabsHeader::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--xai-border-default) 20%,
+    var(--xai-border-default) 80%,
+    transparent 100%
+  );
+  z-index: 1;
 }
 
 [data-mantine-color-scheme="light"] .tabsHeader {
@@ -15,13 +38,16 @@
 }
 
 [data-mantine-color-scheme="dark"] .tabsHeader {
-  background-color: var(--mantine-color-dark-7);
+  background: rgba(10, 14, 24, 0.5);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
 }
 
 .newTab {
   height: 2.2rem;
   width: 2.2rem;
   padding: 0.5em;
+  transition: all var(--xai-duration-fast) var(--xai-ease);
 }
 
 [data-mantine-color-scheme="light"] .newTab {
@@ -30,8 +56,8 @@
 }
 
 [data-mantine-color-scheme="dark"] .newTab {
-  border: 1px solid var(--mantine-color-dark-4);
-  background-color: var(--mantine-color-dark-7);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+  background-color: transparent;
 }
 
 [data-mantine-color-scheme="light"] .newTab:hover {
@@ -39,7 +65,8 @@
 }
 
 [data-mantine-color-scheme="dark"] .newTab:hover {
-  background-color: var(--mantine-color-dark-6);
+  background-color: rgba(255, 255, 255, 0.04);
+  border-color: var(--xai-border-hover);
 }
 
 .tabsFiller {
@@ -51,5 +78,5 @@
 }
 
 [data-mantine-color-scheme="dark"] .tabsFiller {
-  border-bottom: 1px solid var(--mantine-color-dark-4);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
 }

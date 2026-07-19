@@ -1,6 +1,14 @@
+/* ============================================================
+   BOARD TAB — Premium Tab Design
+   ============================================================ */
+
 .tab {
   padding-right: 9px;
   height: 2.2rem;
+  position: relative;
+  transition: all var(--xai-duration-fast) var(--xai-ease);
+  border-top: 2px solid transparent;
+  border-bottom: 2px solid transparent;
 }
 
 [data-mantine-color-scheme="light"] .tab {
@@ -10,7 +18,7 @@
 
 [data-mantine-color-scheme="dark"] .tab {
   background-color: transparent;
-  color: var(--mantine-color-gray-4);
+  color: rgba(255, 255, 255, 0.5);
 }
 
 [data-mantine-color-scheme="light"] .tab:hover {
@@ -18,13 +26,15 @@
 }
 
 [data-mantine-color-scheme="dark"] .tab:hover {
-  background-color: var(--mantine-color-dark-6);
+  background-color: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .tab:active {
   transform: unset;
 }
 
+/* Selected tab */
 .selected {
   border-top: 2px solid var(--mantine-primary-color-filled);
   border-bottom: 2px solid transparent;
@@ -35,7 +45,8 @@
 }
 
 [data-mantine-color-scheme="dark"] .selected {
-  background-color: var(--mantine-color-dark-7);
+  background-color: rgba(20, 24, 38, 0.6);
+  color: rgba(255, 255, 255, 0.9);
 }
 
 [data-mantine-color-scheme="light"] .selected:hover {
@@ -43,27 +54,70 @@
 }
 
 [data-mantine-color-scheme="dark"] .selected:hover {
-  background-color: var(--mantine-color-dark-7);
+  background-color: rgba(20, 24, 38, 0.6);
 }
 
+/* Tab type color indicator dot */
+.tabTypeDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  margin-right: 2px;
+  opacity: 0.7;
+}
+
+.tabTypeDot[data-type="analysis"] {
+  background: var(--xai-cyan);
+  box-shadow: 0 0 4px rgba(0, 180, 216, 0.3);
+}
+
+.tabTypeDot[data-type="puzzles"] {
+  background: var(--xai-purple);
+  box-shadow: 0 0 4px rgba(155, 89, 182, 0.3);
+}
+
+.tabTypeDot[data-type="play"] {
+  background: var(--xai-green);
+  box-shadow: 0 0 4px rgba(46, 204, 113, 0.3);
+}
+
+.tabTypeDot[data-type="new"] {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+/* Tab input */
 .input {
   all: unset;
   min-width: 5rem;
   font-size: 0.8rem;
+  font-family: var(--xai-font-body);
   padding-top: 0.4rem;
   padding-bottom: 0.4rem;
   outline: none;
   text-align: start;
+  transition: color var(--xai-duration-fast) ease;
 }
 
+/* Close tab button */
 .closeTabBtn {
   box-sizing: content-box;
   padding: 0.3rem;
-  transition: background-color 100ms ease;
+  transition: all var(--xai-duration-fast) ease;
+  border-radius: 4px;
+  opacity: 0.4;
+}
+
+.tab:hover .closeTabBtn {
+  opacity: 0.7;
+}
+
+.closeTabBtn:hover {
+  opacity: 1 !important;
 }
 
 [data-mantine-color-scheme="light"] .closeTabBtn:hover {
-  background-color: rgba(0, 0, 0, 0.05);
+  background-color: rgba(0, 0, 0, 0.08);
 }
 
 [data-mantine-color-scheme="dark"] .closeTabBtn:hover {

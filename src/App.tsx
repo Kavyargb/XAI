@@ -240,7 +240,9 @@ export default function App() {
 
   const theme = createTheme({
     fontFamily: "Outfit, Inter, system-ui, -apple-system, sans-serif",
+    headings: { fontFamily: "Outfit, system-ui, -apple-system, sans-serif" },
     primaryColor,
+    defaultRadius: "md",
     colors: {
       dark: [
         "#C1C2C5",
@@ -261,8 +263,20 @@ export default function App() {
           variant: "transparent",
           color: "gray",
         },
+        styles: {
+          root: {
+            transition: "all 150ms cubic-bezier(0.4, 0, 0.2, 1)",
+          },
+        },
       }),
-      TextInput: TextInput.extend({ defaultProps: { spellCheck } }),
+      TextInput: TextInput.extend({
+        defaultProps: { spellCheck },
+        styles: {
+          input: {
+            transition: "border-color 150ms ease, box-shadow 150ms ease",
+          },
+        },
+      }),
       Autocomplete: Autocomplete.extend({ defaultProps: { spellCheck } }),
       Textarea: Textarea.extend({ defaultProps: { spellCheck } }),
       Input: Input.extend({

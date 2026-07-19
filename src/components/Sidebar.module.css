@@ -1,113 +1,205 @@
+/* ============================================================
+   SIDEBAR — Premium Navigation
+   ============================================================ */
+
 .sidebarContainer {
   display: flex;
   flex-direction: column;
   height: 100vh;
   width: 240px;
-  background: rgba(14, 18, 28, 0.7);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border-right: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 1.5rem 1rem;
+  background: rgba(10, 14, 24, 0.75);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border-right: 1px solid var(--xai-border-subtle);
+  padding: 1.25rem 0.75rem;
   box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
 }
 
+/* Subtle ambient glow at top of sidebar */
+.sidebarContainer::before {
+  content: "";
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 180px;
+  height: 120px;
+  background: radial-gradient(ellipse, rgba(0, 180, 216, 0.08) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── Logo ─── */
 .logoSection {
-  margin-bottom: 2.5rem;
-  padding: 0.5rem 0;
+  margin-bottom: 2rem;
+  padding: 0.75rem 0.5rem;
   text-align: center;
+  position: relative;
+  z-index: 1;
+}
+
+.logoWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  position: relative;
 }
 
 .logoIcon {
-  font-size: 1.6rem;
-  color: var(--meaning-blue);
-  text-shadow: 0 0 12px rgba(0, 180, 216, 0.5);
+  font-size: 1.5rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 8px rgba(0, 180, 216, 0.4));
+  animation: float 4s ease-in-out infinite;
 }
 
 .logoText {
-  font-size: 1.15rem;
+  font-size: 1rem;
   font-weight: 800;
-  letter-spacing: 0.35em;
+  letter-spacing: 0.3em;
   color: #fff;
-  background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #a5b4fc 50%, var(--xai-cyan) 100%);
+  background-size: 200% 200%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  animation: shimmer 6s ease-in-out infinite;
 }
 
+/* ─── Navigation Links ─── */
 .linksSection {
   flex-grow: 1;
+  position: relative;
+  z-index: 1;
 }
 
 .link {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 0.75rem 1.25rem;
-  border-radius: 12px;
-  color: rgba(255, 255, 255, 0.55);
+  padding: 0.7rem 1rem;
+  border-radius: var(--xai-radius-md);
+  color: rgba(255, 255, 255, 0.5);
   text-decoration: none;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   font-weight: 500;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--xai-duration-fast) var(--xai-ease);
   border: 1px solid transparent;
+  position: relative;
+  overflow: hidden;
+}
+
+.link::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 0;
+  background: var(--xai-cyan);
+  border-radius: 0 2px 2px 0;
+  transition: height var(--xai-duration-normal) var(--xai-ease-spring);
+  box-shadow: 0 0 8px rgba(0, 180, 216, 0.4);
 }
 
 .link:hover {
-  color: #fff;
+  color: rgba(255, 255, 255, 0.9);
   background: rgba(255, 255, 255, 0.03);
   border-color: rgba(255, 255, 255, 0.03);
-  transform: translateX(2px);
+}
+
+.link:hover .linkIcon {
+  transform: scale(1.1) translateY(-1px);
+  color: var(--xai-cyan);
 }
 
 .linkIcon {
   color: inherit;
-  transition: transform 0.2s ease;
-}
-
-.link:hover .linkIcon {
-  transform: scale(1.05);
+  transition: all var(--xai-duration-fast) var(--xai-ease-spring);
+  flex-shrink: 0;
 }
 
 .linkLabel {
-  font-size: 0.92rem;
+  font-size: 0.88rem;
   font-weight: 500;
+  font-family: var(--xai-font-display);
 }
 
+/* Active State */
 .active {
-  background: rgba(0, 180, 216, 0.1) !important;
-  border-color: rgba(0, 180, 216, 0.25) !important;
-  color: var(--meaning-blue) !important;
-  box-shadow: 0 4px 15px rgba(0, 180, 216, 0.1),
-              inset 0 1px 1px rgba(255, 255, 255, 0.05);
+  background: var(--xai-cyan-dim) !important;
+  border-color: rgba(0, 180, 216, 0.2) !important;
+  color: var(--xai-cyan) !important;
+  box-shadow:
+    0 4px 16px rgba(0, 180, 216, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 0.04);
+}
+
+.active::before {
+  height: 55%;
 }
 
 .active .linkIcon {
-  color: var(--meaning-blue) !important;
+  color: var(--xai-cyan) !important;
   filter: drop-shadow(0 0 4px rgba(0, 180, 216, 0.4));
+  transform: scale(1.05);
 }
 
+/* ─── Bottom Section ─── */
 .bottomSection {
   margin-top: auto;
-  padding-top: 1rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--xai-border-subtle);
+  position: relative;
+  z-index: 1;
 }
 
-.profileCard {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid rgba(255, 255, 255, 0.04);
-  border-radius: 14px;
-  padding: 10px 12px;
+.versionBadge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 10px;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.2);
+  letter-spacing: 0.05em;
   margin-top: 0.5rem;
 }
 
+/* ─── Profile Card ─── */
+.profileCard {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--xai-border-subtle);
+  border-radius: var(--xai-radius-lg);
+  padding: 10px 12px;
+  margin-top: 0.5rem;
+  transition: all var(--xai-duration-normal) var(--xai-ease);
+  cursor: default;
+}
+
+.profileCard:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--xai-border-hover);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
 .avatarWrapper {
-  width: 36px;
-  height: 36px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
   overflow: hidden;
-  border: 2px solid rgba(0, 180, 216, 0.3);
-  box-shadow: 0 0 10px rgba(0, 180, 216, 0.1);
+  border: 2px solid rgba(0, 180, 216, 0.25);
+  box-shadow: 0 0 12px rgba(0, 180, 216, 0.1);
   background: rgba(14, 18, 28, 0.9);
   flex-shrink: 0;
+  transition: all var(--xai-duration-fast) ease;
+}
+
+.profileCard:hover .avatarWrapper {
+  border-color: rgba(0, 180, 216, 0.45);
+  box-shadow: 0 0 16px rgba(0, 180, 216, 0.2);
 }
 
 .avatarImage {
@@ -117,26 +209,40 @@
 }
 
 .profileName {
-  font-size: 0.88rem;
+  font-size: 0.85rem;
   font-weight: 600;
   color: #fff;
   line-height: 1.2;
+  font-family: var(--xai-font-display);
 }
 
 .profileTitle {
-  font-size: 0.72rem;
-  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.3);
   font-weight: 500;
 }
 
 .ratingBadge {
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 700;
-  color: var(--meaning-blue);
-  background: rgba(0, 180, 216, 0.1);
-  border: 1px solid rgba(0, 180, 216, 0.2);
-  padding: 2px 6px;
-  border-radius: 6px;
+  color: var(--xai-cyan);
+  background: var(--xai-cyan-dim);
+  border: 1px solid rgba(0, 180, 216, 0.18);
+  padding: 2px 8px;
+  border-radius: var(--xai-radius-sm);
   white-space: nowrap;
   flex-shrink: 0;
+  font-family: var(--xai-font-body);
+  letter-spacing: 0.02em;
 }
+
+/* ─── Stagger entrance animation ─── */
+.sidebarContainer .link {
+  animation: slideUp 350ms var(--xai-ease-spring) both;
+}
+
+.sidebarContainer .link:nth-child(1) { animation-delay: 50ms; }
+.sidebarContainer .link:nth-child(2) { animation-delay: 100ms; }
+.sidebarContainer .link:nth-child(3) { animation-delay: 150ms; }
+.sidebarContainer .link:nth-child(4) { animation-delay: 200ms; }
+.sidebarContainer .link:nth-child(5) { animation-delay: 250ms; }

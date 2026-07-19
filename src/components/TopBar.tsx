@@ -99,7 +99,7 @@ function TopBar({ menuActions }: { menuActions: MenuGroup[] }) {
   }, []);
 
   return (
-    <Group>
+    <Group className={classes.topBarContainer}>
       <Box style={{ flexGrow: 1 }}>
         <Group data-tauri-drag-region gap="xs" px="sm">
           <Box h="1.25rem" w="1.25rem">
@@ -129,6 +129,7 @@ function TopBar({ menuActions }: { menuActions: MenuGroup[] }) {
                     variant="subtle"
                     color={colorScheme === "dark" ? "gray" : "dark"}
                     size="compact-xs"
+                    className={classes.menuButton}
                   >
                     {action.label}
                   </Button>
@@ -158,6 +159,16 @@ function TopBar({ menuActions }: { menuActions: MenuGroup[] }) {
               </Menu>
             ))}
           </Group>
+
+          {/* Command palette hint */}
+          <div
+            className={classes.paletteHint}
+            data-tauri-drag-region={undefined}
+            onClick={() => window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", ctrlKey: true }))}
+          >
+            <span className={classes.paletteHintText}>Search commands</span>
+            <span className={classes.paletteHintKbd}>Ctrl+K</span>
+          </div>
         </Group>
       </Box>
       <Box>

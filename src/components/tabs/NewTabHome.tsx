@@ -81,7 +81,7 @@ interface RatingCardProps {
 function RatingCard({ id, label, value, change, icon, color, pathD }: RatingCardProps) {
   const isPositive = change >= 0;
   return (
-    <Box className={classes.ratingCard}>
+    <Box className={classes.ratingCard} style={{ "--card-accent": color } as React.CSSProperties}>
       <div className={classes.ratingInfo}>
         <div className={classes.ratingHeader}>
           <Box className={classes.ratingIcon} style={{ color }}>
@@ -97,7 +97,7 @@ function RatingCard({ id, label, value, change, icon, color, pathD }: RatingCard
         </div>
       </div>
 
-      {/* Glowing SVG mini chart */}
+      {/* Glowing SVG mini chart with draw-on animation */}
       <svg className={classes.chartContainer} viewBox="0 0 90 50">
         <defs>
           <filter id={`glow-${id}`} x="-20%" y="-20%" width="140%" height="140%">
@@ -112,6 +112,7 @@ function RatingCard({ id, label, value, change, icon, color, pathD }: RatingCard
           strokeWidth="3"
           strokeLinecap="round"
           filter={`url(#glow-${id})`}
+          className={classes.chartPath}
         />
       </svg>
     </Box>
@@ -338,6 +339,27 @@ export default function NewTabHome({ id }: { id: string }) {
 
   const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
+  // Time-of-day greeting
+  const hour = new Date().getHours();
+  let greetingPrefix = "Good morning";
+  let greetingEmoji = "☀️";
+  if (hour >= 12 && hour < 17) {
+    greetingPrefix = "Good afternoon";
+    greetingEmoji = "🌤️";
+  } else if (hour >= 17 && hour < 21) {
+    greetingPrefix = "Good evening";
+    greetingEmoji = "🌅";
+  } else if (hour >= 21 || hour < 5) {
+    greetingPrefix = "Good night";
+    greetingEmoji = "🌙";
+  }
+
+  const activePlayerName =
+    chessComSession?.chessCom?.username ||
+    lichessSession?.lichess?.username ||
+    sessions[0]?.player ||
+    "Player";
+
   return (
     <>
       <ImportModal
@@ -349,6 +371,15 @@ export default function NewTabHome({ id }: { id: string }) {
       <CreateRepertoireModal opened={openRepertoireModal} setOpened={setOpenRepertoireModal} />
 
       <div className={classes.container}>
+        {/* Greeting */}
+        <div className={classes.greetingSection}>
+          <div className={classes.greetingText}>
+            {greetingPrefix}, {activePlayerName}
+            <span className={classes.greetingEmoji}>{greetingEmoji}</span>
+          </div>
+          <div className={classes.greetingSubtext}>Ready for your next move?</div>
+        </div>
+
         {/* Top Ratings Grid Dashboard */}
         <div className={classes.ratingsGrid}>
           <RatingCard
@@ -396,10 +427,12 @@ export default function NewTabHome({ id }: { id: string }) {
         <div className={classes.mainGrid}>
           {/* Left Column: Hero Play Banner & Quick Action Grid */}
           <div>
-            <div
-              className={classes.heroCard}
-              style={{ backgroundImage: `url('/chess_hero_banner.png')` }}
-            >
+            <div className={classes.heroCard}>
+              <img
+                src="/chess_hero_banner.png"
+                alt=""
+                className={classes.heroBgImage}
+              />
               <div className={classes.heroOverlay} />
               <div className={classes.heroContent}>
                 <h2 className={classes.heroTitle}>Play Chess</h2>
@@ -407,6 +440,7 @@ export default function NewTabHome({ id }: { id: string }) {
                   Start a new game and challenge the world
                 </p>
                 <button className={classes.playBtn} onClick={handlePlayNow}>
+                  <span className={classes.liveDot} />
                   Play Now <IconChevronRight size="1.1rem" />
                 </button>
               </div>
